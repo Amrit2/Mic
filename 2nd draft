@@ -1,0 +1,107 @@
+#include <avr/io.h>
+#include <LabBoard.h>
+#include <stdio.h>
+
+#define up (PINA & (1<<3))
+#define down (PINA & (1<<5))
+#define right (PINA & (1<<4))
+#define select (PINA & (1<<6))
+#define motor 0
+#define lamp 1
+#define speaker 2
+#define LED 3
+
+void setup (void);
+
+char input, count, state;
+
+int main(void)
+{
+	input = PINA;
+
+	char line0[20], line1[20], line2[20], line3[20];
+	
+	SLCDInit();
+	SLCDDisplayOn();
+	SLCDClearScreen();
+	
+	sprintf(line0, "1) Motor");
+	SLCDSetCursorPosition(0,0);
+	SLCDWriteString(line0);
+	
+	sprintf(line1, "2) Lamp");
+	SLCDSetCursorPosition(1,0);
+	SLCDWriteString(line1);
+	
+	sprintf(line2, "3) Speaker");
+	SLCDSetCursorPosition(2,0);
+	SLCDWriteString(line2);
+	
+	sprintf(line3, "4) RGB LED");
+	SLCDSetCursorPosition(3,0);
+	SLCDWriteString(line3);
+
+
+	count = 0;
+	state = motor;
+	
+    if (input == !down && count == 0)
+	{
+		count++;
+		state = lamp;
+	}
+	
+	else if (input == !down && count == 1)
+	{
+		count++;
+		state = speaker;
+		
+	}
+	
+	switch  (state)
+	{
+		case motor:
+		{
+			SLCDSetCursorPosition(0,8);
+			SLCDTurnOnBlinkingCursor();
+			
+			break;
+		}
+		
+		SLCDTurnOffBlinkingCursor();
+		
+		case lamp:
+		{
+			SLCDSetCursorPosition(1,7);
+			SLCDTurnOnBlinkingCursor();
+			
+			break;
+		}
+		SLCDTurnOffBlinkingCursor();
+		
+		case speaker:
+		{
+			SLCDSetCursorPosition(2,10);
+			SLCDTurnOnBlinkingCursor();
+		}
+		
+		SLCDTurnOffBlinkingCursor();
+	}
+
+	setup();
+	while (1)
+	{
+		
+	}
+}
+
+
+
+void setup (void)
+{
+	DDRA = 0x00;
+	DDRC = 0xFF;
+	DDRE= 0x01;
+	PORTE = 0x03;
+}
+
