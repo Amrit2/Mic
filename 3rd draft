@@ -2,10 +2,10 @@
 #include <LabBoard.h>
 #include <stdio.h>
 
-#define up (PINA & (1<<3))
-#define down (PINA & (1<<5))
-#define right (PINA & (1<<4))
-#define select (PINA & (1<<6))
+#define up !(PINA & (1<<3))
+#define down !(PINA & (1<<5))
+#define right !(PINA & (1<<4))
+#define select !(PINA & (1<<6))
 #define motor 0
 #define lamp 1
 #define speaker 2
@@ -13,12 +13,11 @@
 
 void setup (void);
 
-char count, position;
+char count;
+char position;
 
 int main(void)
 {
-	/*
-	input = PINA; */
 
 	char line0[20], line1[20], line2[20], line3[20];
 	
@@ -42,21 +41,29 @@ int main(void)
 	SLCDSetCursorPosition(3,0);
 	SLCDWriteString(line3);
 
-
-	position = lamp;
 	count = 0;
-	
-	if (position == lamp)
-	{
-		SLCDSetCursorPosition(1,7);
-		SLCDTurnOnBlinkingCursor();
-	}
-	
 		
+		SLCDSetCursorPosition(0,8);
+		SLCDTurnOnBlinkingCursor();
+		 	
 	setup();
 	while (1)
 	{
+		if (down && count == 0)
+		{
+			count++;
+			SLCDSetCursorPosition(1,7);
+			SLCDTurnOnBlinkingCursor();
+		}
+		else if (down && count == 1)
+		{
+			count++;
+			SLCDSetCursorPosition(2,10);
+			SLCDTurnOnBlinkingCursor();
+		}
 		
+		 
+		 
 	}
 }
 
@@ -66,7 +73,7 @@ void setup (void)
 {
 	DDRA = 0x00;
 	DDRC = 0xFF;
-	DDRE= 0x01;
-	PORTE = 0x03;
+	DDRE= 0x03;
+	PORTE = 0x01; // kinda just is 
 }
 
