@@ -1,76 +1,176 @@
-#define mainMenu 1
+#define F_CPU 8000000UL
+#include <avr/io.h>
+#include <LabBoard.h>
+#include <stdio.h>
+#include <util/delay.h>
 
-void setup(void)
+#define up !(PINA & (1<<3))
+#define down !(PINA & (1<<5))
+#define right !(PINA & (1<<4))
+#define select !(PINA & (1<<6))
+#define left !(PINA & (1<<7))
+
+void setup (void);
+void mainMenu(void);
+char showCP(char cp);
+char lamp(void);
+char motor (void);
+char speaker (void);
+char led (void);
+
+int cp;
+signed char curposition; //signed char -127 to 126
+int main(void)
 {
-SLCDInit();         // Initialize the LCD.
-	SLCDDisplayOn();    // Switched On the LCD.
-	SLCDClearScreen(); 
+	
+	
+	setup();
+	
+	while (1)
+	{
+		mainMenu();
+		//cp = showCP(curposition);
+	}
 }
+
 void mainMenu(void)
 {
-sprintf(line0,"1) Motor");
-SLCDSetCursorPosition(0,0);
-SLCDWriteString(line0);
+	char line0[20], line1[20], line2[20], line3[20];
+	
+	_delay_ms (100);
+	SLCDTurnOffBlinkingCursor();
+	
+	sprintf(line0,"1) Motor");
+	SLCDSetCursorPosition(0,0);
+	SLCDWriteString(line0);
 
-sprintf(line1,"2) Lamp");
-SLCDSetCursorPosition(1,0);
-SLCDWriteString(line1);
+	sprintf(line1,"2) Lamp");
+	SLCDSetCursorPosition(1,0);
+	SLCDWriteString(line1);
 
-sprintf(line2,"3) Speaker");
-SLCDSetCursorPosition(2,0);
-SLCDWriteString(line2);
+	sprintf(line2,"3) Speaker");
+	SLCDSetCursorPosition(2,0);
+	SLCDWriteString(line2);
 
-sprintf(line3,"4) RGB LED");
-SLCDSetCursorPosition(3,0);
-SLCDWriteString(line3);
+	sprintf(line3,"4) RGB LED");
+	SLCDSetCursorPosition(3,0);
+	SLCDWriteString(line3);
+	
+	SLCDSetCursorPosition(curposition, 2);
+	SLCDTurnOnBlinkingCursor();
+	if(up)
+	{
+		curposition--;
+		_delay_ms(150);
+		cp = curposition;
+		if (curposition < 0)
+		{
+			curposition = 3;
+		}
+		
+	}
+	else if(down)
+	{
+		curposition++;
+		_delay_ms(150);
+		cp = curposition;
+		
+		if (curposition == 4)
+		{
+			curposition = 0;
+		}
+	}
+	
+	if(select||right)
+	{
+		if(cp == 0)
+		{
+			motor();
+		}
+		else if(cp == 1)
+		{
+			lamp();
+		}
+		else if(cp == 2)
+		{
+			speaker();
+		}
+		else
+		{
+			led();
+		}
+	
+	}
 }
 
-char showCP(chat cp)
-{
-
-SLCDSetCursorPosition(cp, 0);
-   SLCDTurnOnBlinkingCursor();
-if(upButton)
-{
-  cursorPosition--;
-  _delay_ms(150);
-}
-else if(downButton)
-{
-  cursorPosition++;
-  _delay_ms(150);
-}
-  return cp;
-}
-int main (void)
-{
-  setup();
-  mainMenu();
-  char state = 1;
-  char cp = 0;
-  while(1)
-  {
-        cp = showCP(cp);
-        if(enter||right)
-        {
-          if(cp = 0)
-          {
-            motor();
-          }
-          else if(cp = 1)
-          {
-            lamp
-          }
-        }
-      break;
-    
-    }
-  }
+char motor(void)
+{ 
+	SLCDClearScreen();
+	SLCDTurnOffBlinkingCursor();
+	while (!left)
+	{
+		char line0[20];
+		sprintf(line0,"Motor Speed");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	}
 }
 
-char motor ()
+char lamp(void)
 {
- submenu 
- motor speed
- 
+	SLCDClearScreen();
+	SLCDTurnOffBlinkingCursor();
+	while (!left)
+	{
+		char line0[20];
+		sprintf(line0,"Lamp Brightness");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	}
+}
+
+char speaker (void)
+{
+	SLCDClearScreen();
+	SLCDTurnOffBlinkingCursor();
+	while (!left)
+	{
+		char line0[20];
+		sprintf(line0,"Speaker Frequency");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	}
+}
+
+char led (void)
+{
+	SLCDClearScreen();
+	SLCDTurnOffBlinkingCursor();
+	while (!left)
+	{
+		char line0[20], line1[20], line2[20];
+		sprintf(line0,"Red LED");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	
+		sprintf(line1,"Green LED");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	
+		sprintf(line2,"Blue LED");
+		SLCDSetCursorPosition(0,0);
+		SLCDWriteString(line0);
+	}
+}
+
+
+void setup (void)
+{
+	SLCDInit();         // Initialize the LCD.
+	SLCDDisplayOn();    // Switched On the LCD.
+	SLCDClearScreen();
+	DDRA = 0x00;
+	DDRC = 0xFF;
+	DDRE= 0x03;
+	PORTE = 0x01; // kinda just is 
 }
