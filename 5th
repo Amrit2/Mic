@@ -1,0 +1,76 @@
+#define mainMenu 1
+
+void setup(void)
+{
+SLCDInit();         // Initialize the LCD.
+	SLCDDisplayOn();    // Switched On the LCD.
+	SLCDClearScreen(); 
+}
+void mainMenu(void)
+{
+sprintf(line0,"1) Motor");
+SLCDSetCursorPosition(0,0);
+SLCDWriteString(line0);
+
+sprintf(line1,"2) Lamp");
+SLCDSetCursorPosition(1,0);
+SLCDWriteString(line1);
+
+sprintf(line2,"3) Speaker");
+SLCDSetCursorPosition(2,0);
+SLCDWriteString(line2);
+
+sprintf(line3,"4) RGB LED");
+SLCDSetCursorPosition(3,0);
+SLCDWriteString(line3);
+}
+
+char showCP(chat cp)
+{
+
+SLCDSetCursorPosition(cp, 0);
+   SLCDTurnOnBlinkingCursor();
+if(upButton)
+{
+  cursorPosition--;
+  _delay_ms(150);
+}
+else if(downButton)
+{
+  cursorPosition++;
+  _delay_ms(150);
+}
+  return cp;
+}
+int main (void)
+{
+  setup();
+  mainMenu();
+  char state = 1;
+  char cp = 0;
+  while(1)
+  {
+        cp = showCP(cp);
+        if(enter||right)
+        {
+          if(cp = 0)
+          {
+            motor();
+          }
+          else if(cp = 1)
+          {
+            lamp
+          }
+        }
+      break;
+    
+    }
+  }
+}
+
+char motor ()
+{
+ submenu 
+ motor speed
+ 
+}
