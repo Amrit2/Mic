@@ -21,10 +21,9 @@ char ledmenu (void);
 
 int cp,clp;
 signed char curposition; //signed char -127 to 126
-signed char curledposition;
+int curledposition;
 int main(void)
 {
-	
 	
 	setup();
 	
@@ -156,6 +155,7 @@ char led (void)
 		
 		while (!left)
 		{
+			curledposition = 1;
 			sprintf(line0,"RGB LED Control");
 			SLCDSetCursorPosition(0,0);
 			SLCDWriteString(line0);
@@ -171,59 +171,72 @@ char led (void)
 			sprintf(line3,"3) Set Blue mA");
 			SLCDSetCursorPosition(3,0);
 			SLCDWriteString(line3);
-		}
-			SLCDSetCursorPosition(curledposition, 2);
-			SLCDTurnOnBlinkingCursor();
+			
 			ledmenu();
+		}
 			
 	SLCDClearScreen();
 }
 
 char ledmenu (void)
 {
-	SLCDTurnOffBlinkingCursor();
+	curledposition = 1;
 	SLCDSetCursorPosition(curledposition, 2);
 	SLCDTurnOnBlinkingCursor();
-	if(up)
+	while (1)
 	{
-		curledposition--;
-		_delay_ms(150);
-		clp = curledposition;
-		if (curledposition < 1)
+		if(up)
 		{
-			curledposition = 1;
+			if (curledposition <= 1)
+			{
+				curledposition = 3;
+				_delay_ms(150);
+			}
+			else
+			{
+				curledposition--;
+				_delay_ms(150);
+				clp = curledposition;
+			}
+		
 		}
-		
-	}
-	else if(down)
-	{
-		curledposition++;
-		_delay_ms(150);
-		clp = curledposition;
-		
-		if (curledposition == 4)
+		else if(down)
 		{
-			curledposition = 1;
+			
+			if (curledposition == 4)
+			{
+				curledposition = 1;
+				_delay_ms(150);
+			}
+			else
+			{
+				curledposition++;
+				_delay_ms(150);
+				clp = curledposition;
+			}
 		}
-	}
 	
 	if(select||right)
-	{
-		if(clp == 1)
 		{
-			motor(); // DISPLAY THE RED LED
+			if(clp == 1)
+			{
+				motor(); // DISPLAY THE RED LED
+			}
+			else if(clp == 2)
+			{
+				lamp(); // DISPLAY THE GREEN
+			}
+			else
+			{
+				led(); //  DISPLAY BLUE
+			}
+		
 		}
-		else if(clp == 2)
-		{
-			lamp(); // DISPLAY THE GREEN
-		}
-		else
-		{
-			led(); //  DISPLAY BLUE
-		}
-	
+	SLCDSetCursorPosition(curledposition, 2);
 	}
+
 }
+
 void setup (void)
 {
 	SLCDInit();         // Initialize the LCD.
