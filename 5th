@@ -17,9 +17,11 @@ char lamp(void);
 char motor (void);
 char speaker (void);
 char led (void);
+char ledmenu (void);
 
-int cp;
+int cp,clp;
 signed char curposition; //signed char -127 to 126
+signed char curledposition;
 int main(void)
 {
 	
@@ -29,12 +31,12 @@ int main(void)
 	while (1)
 	{
 		mainMenu();
-		//cp = showCP(curposition);
 	}
 }
 
 void mainMenu(void)
 {
+	
 	char line0[20], line1[20], line2[20], line3[20];
 	
 	_delay_ms (100);
@@ -58,6 +60,7 @@ void mainMenu(void)
 	
 	SLCDSetCursorPosition(curposition, 2);
 	SLCDTurnOnBlinkingCursor();
+	
 	if(up)
 	{
 		curposition--;
@@ -114,6 +117,7 @@ char motor(void)
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
 	}
+	SLCDClearScreen();
 }
 
 char lamp(void)
@@ -127,6 +131,7 @@ char lamp(void)
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
 	}
+	SLCDClearScreen();
 }
 
 char speaker (void)
@@ -140,30 +145,85 @@ char speaker (void)
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
 	}
+	SLCDClearScreen();
 }
 
 char led (void)
 {
 	SLCDClearScreen();
 	SLCDTurnOffBlinkingCursor();
-	while (!left)
-	{
-		char line0[20], line1[20], line2[20];
-		sprintf(line0,"Red LED");
-		SLCDSetCursorPosition(0,0);
-		SLCDWriteString(line0);
-	
-		sprintf(line1,"Green LED");
-		SLCDSetCursorPosition(0,0);
-		SLCDWriteString(line0);
-	
-		sprintf(line2,"Blue LED");
-		SLCDSetCursorPosition(0,0);
-		SLCDWriteString(line0);
-	}
+		char line0[20], line1[20], line2[20], line3[20];
+		
+		while (!left)
+		{
+			sprintf(line0,"RGB LED Control");
+			SLCDSetCursorPosition(0,0);
+			SLCDWriteString(line0);
+		
+			sprintf(line1,"1) Set Red mA");
+			SLCDSetCursorPosition(1,0);
+			SLCDWriteString(line1);
+			
+			sprintf(line2,"2) Set Green mA");
+			SLCDSetCursorPosition(2,0);
+			SLCDWriteString(line2);
+			
+			sprintf(line3,"3) Set Blue mA");
+			SLCDSetCursorPosition(3,0);
+			SLCDWriteString(line3);
+		}
+			SLCDSetCursorPosition(curledposition, 2);
+			SLCDTurnOnBlinkingCursor();
+			ledmenu();
+			
+	SLCDClearScreen();
 }
 
-
+char ledmenu (void)
+{
+	SLCDTurnOffBlinkingCursor();
+	SLCDSetCursorPosition(curledposition, 2);
+	SLCDTurnOnBlinkingCursor();
+	if(up)
+	{
+		curledposition--;
+		_delay_ms(150);
+		clp = curledposition;
+		if (curledposition < 1)
+		{
+			curledposition = 1;
+		}
+		
+	}
+	else if(down)
+	{
+		curledposition++;
+		_delay_ms(150);
+		clp = curledposition;
+		
+		if (curledposition == 4)
+		{
+			curledposition = 1;
+		}
+	}
+	
+	if(select||right)
+	{
+		if(clp == 1)
+		{
+			motor(); // DISPLAY THE RED LED
+		}
+		else if(clp == 2)
+		{
+			lamp(); // DISPLAY THE GREEN
+		}
+		else
+		{
+			led(); //  DISPLAY BLUE
+		}
+	
+	}
+}
 void setup (void)
 {
 	SLCDInit();         // Initialize the LCD.
@@ -174,3 +234,4 @@ void setup (void)
 	DDRE= 0x03;
 	PORTE = 0x01; // kinda just is 
 }
+
