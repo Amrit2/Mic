@@ -145,9 +145,10 @@ char motor(void)
 	SLCDClearScreen();
 }
 
-char lamp(void)
+char lamp(void)   /// always on
 {
 	int intensity = 0;
+
 	SLCDClearScreen();
 	SLCDTurnOffBlinkingCursor();
 	while (!left)
@@ -156,8 +157,6 @@ char lamp(void)
 		sprintf(line0,"Lamp Brightness");
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
-		
-		
 				if (up)
 				{
 					intensity++;
@@ -188,14 +187,40 @@ char lamp(void)
 
 char speaker (void)
 {
+	int frequency = 0;
 	SLCDClearScreen();
 	SLCDTurnOffBlinkingCursor();
 	while (!left)
 	{
-		char line0[20];
+		char line0[20], line1[20];
 		sprintf(line0,"Speaker Frequency");
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
+		
+		if (up)
+				{
+					frequency++;
+					_delay_ms(100);
+					if (frequency >25)
+					{
+						frequency = 25;
+					}
+				}
+				
+				else if (down)
+				{
+					frequency--;
+					_delay_ms(100);
+					if (frequency < 0)
+					{
+						frequency = 0;
+					}
+					
+				}
+				OCR2A = 500/frequency; // 2A is for the speaker
+				sprintf(line1,"%2ikHz", frequency);
+				SLCDSetCursorPosition(1,1);
+				SLCDWriteString(line1);
 	}
 	SLCDClearScreen();
 }
@@ -251,7 +276,7 @@ char ledmenu (void)
 				_delay_ms(150);
 				clp = curledposition;
 			}
-		
+			
 		}
 		else if(down)
 		{
@@ -269,8 +294,8 @@ char ledmenu (void)
 			}
 			
 		}
-	
-	if(select||right)
+		
+		if(select||right)
 		{
 			if(clp == 1)
 			{
@@ -284,12 +309,13 @@ char ledmenu (void)
 			{
 				led(); //  DISPLAY BLUE
 			}
-		
+			
 		}
-	SLCDSetCursorPosition(curledposition, 2);
+		SLCDSetCursorPosition(curledposition, 2);
 	}
 
 }
+
 
 void setup (void)
 {
@@ -301,9 +327,15 @@ void setup (void)
 	DDRE= 0x03;
 	PORTE = 0x01; // kinda just is 
 	
-	TCCR1A = 0b10000010;
+	TCCR1A = 0b10100010; //channel A (motor), channel B (lamp)
 	TCCR1B = 0b00011010;   //prescaler 8
-	DDRB = 0b01100000; // bit 6,5 turned on to turn on the motor (5) and lamp (6)
+	DDRB = 0b01110000; // bit 6,5,4 turned on to turn on the motor (5),lamp (6) and speaker (4)
 	ICR1 = 49;
+	
+	TCCR2A = 0b01000010; //speaker- CTC mode
+	TCCR2B = 0b00000010; // 8 prescaler
+	
+	PORTB = 0b01010000; // speaker 
 }
+
 
