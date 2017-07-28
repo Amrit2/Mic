@@ -25,7 +25,7 @@ void changeAamps (clp);
 
 //global variables
 int cp,clp;
-signed char curposition;            //signed char -127 to 126
+signed char curposition;            				//signed char -127 to 126
 int curledposition;
 int Redamp = 0;
 int Greenamp = 0;
@@ -35,24 +35,25 @@ int Blueamp = 0;
 int main(void)
 {
 	
-	setup();                    // calling the setup function
+	setup();                    				// calling the setup function
 	
 	while (1)
 	{
-		mainMenu();             // calling the mainMenu function
-		RGBDisable(RGB_RED| RGB_BLUE|RGB_GREEN);
+		mainMenu();             			// calling the mainMenu function
+		RGBDisable(RGB_RED| RGB_BLUE|RGB_GREEN);	// disabling the LEDs
 	}
 }
 
 void mainMenu(void)
 {
 	
-	char line0[20], line1[20], line2[20], line3[20];
+	char line0[20], line1[20], line2[20], line3[20]; 	// creating an array 
 	
 	_delay_ms (100);
-	SLCDTurnOffBlinkingCursor();
+	SLCDTurnOffBlinkingCursor();				// making sure the blinker is off initially
 	
-	sprintf(line0,"1) Motor");
+	// printing out the menu on the screen
+	sprintf(line0,"1) Motor");				
 	SLCDSetCursorPosition(0,0);
 	SLCDWriteString(line0);
 
@@ -68,47 +69,47 @@ void mainMenu(void)
 	SLCDSetCursorPosition(3,0);
 	SLCDWriteString(line3);
 	
-	SLCDSetCursorPosition(curposition, 2);
-	SLCDTurnOnBlinkingCursor();
+	SLCDSetCursorPosition(curposition, 2); 			// setting the cursor position depending on curposition
+	SLCDTurnOnBlinkingCursor();				// turn on the blinking cursor at position curposition
 	
-	if(up)
+	if(up)							// decrease the cursor position if up button is pressed
 	{
 		curposition--;
 		_delay_ms(150);
 		cp = curposition;
-		if (curposition < 0)
+		if (curposition < 0)				// roll the cursor over to the bottom from the top
 		{
 			curposition = 3;
 		}
 		
 	}
-	else if(down)
+	else if(down)						// increasing the cursor position when the down button is pressed
 	{
 		curposition++;
 		_delay_ms(150);
 		cp = curposition;
 		
-		if (curposition == 4)
+		if (curposition == 4)				// roll the cursor over to top from the bottom
 		{
 			curposition = 0;
 		}
 	}
 	
-	if(select||right)
+	if(select||right)					// if the user selects a certain menu 
 	{
-		if(cp == 0)
+		if(cp == 0)					// if the cp position is 0 when selected then go to the motor function
 		{
 			motor();
 		}
-		else if(cp == 1)
+		else if(cp == 1)				// if the cp position is 1 when selected then go to the lamp function
 		{
 			lamp();
 		}
-		else if(cp == 2)
+		else if(cp == 2)				// if the cp position is 2 when selected then go to the speaker function
 		{
 			speaker();
 		}
-		else
+		else						// if the cp position is 4 when selected then go to the ledmenu function
 		{
 			ledmenu();
 		}
@@ -116,35 +117,36 @@ void mainMenu(void)
 	}
 }
 
+// motor function 
 char motor(void)
 {
-	int speed = 0;
-	SLCDClearScreen();
-	SLCDTurnOffBlinkingCursor();
-	while (!left)
+	int speed = 0;						// the initial speed of motor is zero
+	SLCDClearScreen();					// clear the top menu
+	SLCDTurnOffBlinkingCursor();				// turn off the blinking cursor which was on in the top menu
+	while (!left)						// while the left button is not pressed do the following
 	{
 		char line0[20], line1[20];
-		sprintf(line0,"Motor Speed");
-		SLCDSetCursorPosition(0,0);
+		sprintf(line0,"Motor Speed"); 			// print the title on the position (0,0)
+		SLCDSetCursorPosition(0,0);	
 		SLCDWriteString(line0);
 		
-		if (up)
+		if (up) 					// if the up button is pressed increase the speed by 1%
 		{
 			speed++;
-			_delay_ms(100);
+			_delay_ms(100); 			
 			if (speed > 100)
 			{
-				speed = 100;
+				speed = 100;			// ensures the speed does not exceed 100 
 			}
 		}
 		
-		else if (down)
+		else if (down)					// if the down button is pressed decrease the speed by 1%
 		{
 			speed--;
 			_delay_ms(100);
 			if (speed <0)
 			{
-				speed = 0;
+				speed = 0;			// ensures the lowest speed is 0 
 			}
 			
 		}
@@ -154,6 +156,7 @@ char motor(void)
 		SLCDWriteString(line1);
 	}
 	SLCDClearScreen();
+	
 }
 
 char lamp(void)   /// always on
