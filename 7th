@@ -349,8 +349,6 @@ char ledmenu (void)
 						{
 							led();
 						}
-						SLCDClearScreen();
-							mainMenu();
 						
 					}
 				
