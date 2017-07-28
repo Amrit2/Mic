@@ -26,9 +26,9 @@ char ledmenu (void);
 int cp,clp;
 signed char curposition;            //signed char -127 to 126
 int curledposition;
-char Redamp = 0;
-char Greenamp = 0;
-char Blueamp = 0;
+int Redamp = 0;
+int Greenamp = 0;
+int Blueamp = 0;
 
 
 int main(void)
@@ -261,6 +261,7 @@ char led (void)
 		SLCDWriteString(line3);
 		
 		ledmenu();
+		
 	}
 	
 	SLCDClearScreen();
@@ -270,13 +271,15 @@ char ledmenu (void)
 {
 	char line0[20],line1[20],line2[20];
 	curledposition = 1;
+	clp = 1;
 	SLCDSetCursorPosition(curledposition, 2);
 	SLCDTurnOnBlinkingCursor();
+	
 	while (!left)
 	{
 		if(up)
 		{
-			if (curledposition <= 1)
+			if (curledposition == 1)
 			{
 				curledposition = 3;
 				_delay_ms(150);
@@ -289,10 +292,10 @@ char ledmenu (void)
 			}
 			
 		}
-		else if(down)
+		if(down)
 		{
 			
-			if (curledposition == 4)
+			if (curledposition > 3)
 			{
 				curledposition = 1;
 				_delay_ms(150);
@@ -310,100 +313,122 @@ char ledmenu (void)
 		RGBWriteRedCurrent(Redamp);
 		RGBWriteGreenCurrent(Greenamp);
 		RGBWriteBlueCurrent(Blueamp);
-		
-		if(select||right)
+	
+	clp = curledposition;	
+	if(select||right)
 		{
 			if(clp == 1)
 			{
-				SLCDClearScreen();
-				SLCDTurnOffBlinkingCursor();
-				sprintf(line0,"RGB Red LED");
-				SLCDSetCursorPosition(0,0);
-				SLCDWriteString(line0);
 				
-				while(1)
-				{
-					if (up && Redamp <= 31)
-					{
-						_delay_ms(200);
-						Redamp++;
-						RGBWriteRedCurrent(Redamp);
-					}
-					else if (down && Redamp > 0)
-					{
-						_delay_ms(200);
-						Redamp--;
-						RGBWriteRedCurrent(Redamp);
-					}
+					SLCDClearScreen();
+					SLCDTurnOffBlinkingCursor();
+					sprintf(line0,"RGB Red LED");
+					SLCDSetCursorPosition(0,0);
+					SLCDWriteString(line0);
 					
-					sprintf(line1,"%2imA",(Redamp));
-					SLCDSetCursorPosition(1,0); // writing a string variable to the display
-					SLCDWriteString(line1);
+					while (1)
+					{
+						if (up && Redamp <= 31)
+						{
+							_delay_ms(200);
+							Redamp++;
+							RGBWriteRedCurrent(Redamp);
+						}
+						else if (down && Redamp > 0)
+						{
+							_delay_ms(200);
+							Redamp--;
+							RGBWriteRedCurrent(Redamp);
+						}
 					
-				}
+							sprintf(line1,"%2imA",(Redamp));
+							SLCDSetCursorPosition(1,0); // writing a string variable to the display
+							SLCDWriteString(line1);
+						
+						if (left)
+						{
+							led();
+						}
+						SLCDClearScreen();
+							mainMenu();
+						
+					}
+				
+				
 			}
 			else if(clp == 2)
 			{
-				SLCDClearScreen();
-				SLCDTurnOffBlinkingCursor();
-				sprintf(line0,"RGB Green LED");
-				SLCDSetCursorPosition(0,0);
-				SLCDWriteString(line0);
+					SLCDClearScreen();
+					SLCDTurnOffBlinkingCursor();
+					sprintf(line0,"RGB Green LED");
+					SLCDSetCursorPosition(0,0);
+					SLCDWriteString(line0);
+					
+					while (1)
+					{
+						if (up && Greenamp <= 31)
+						{
+							_delay_ms(200);
+							Greenamp++;
+							RGBWriteGreenCurrent(Greenamp);
+						}
+						else if (down && Greenamp > 0)
+						{
+							_delay_ms(200);
+							Greenamp--;
+							RGBWriteGreenCurrent(Greenamp);
+						}
+						
+						sprintf(line1,"%2imA",(Greenamp));
+						SLCDSetCursorPosition(1,0); // writing a string variable to the display
+						SLCDWriteString(line1);
+						
+						if (left)
+						{
+							led();
+						}
+					}
 				
-				while(1)
-				{
-					if (up && Greenamp <= 31)
-					{
-						_delay_ms(200);
-						Greenamp++;
-						RGBWriteGreenCurrent(Greenamp);
-					}
-					else if (down && Greenamp >= -1)
-					{
-						_delay_ms(200);
-						Greenamp--;
-						RGBWriteGreenCurrent(Greenamp);
-					}
-					
-					sprintf(line1,"%2imA",(Greenamp));
-					SLCDSetCursorPosition(1,0); // writing a string variable to the display
-					SLCDWriteString(line1);
-					
-				}
+				
 			}
 			else
 			{
-				SLCDClearScreen();
-				SLCDTurnOffBlinkingCursor();
-				sprintf(line0,"RGB Blue LED");
-				SLCDSetCursorPosition(0,0);
-				SLCDWriteString(line0);
-				
-				
-				while(1)
-				{
-					if (up && Blueamp <= 31)
+					SLCDClearScreen();
+					SLCDTurnOffBlinkingCursor();
+					sprintf(line0,"RGB Blue LED");
+					SLCDSetCursorPosition(0,0);
+					SLCDWriteString(line0);
+					
+					while (1)
 					{
-						_delay_ms(200);
-						Blueamp++;
-						RGBWriteBlueCurrent(Blueamp);
-					}
-					else if (down && Blueamp >= -1)
-					{
-						_delay_ms(200);
-						Blueamp--;
-						RGBWriteBlueCurrent(Blueamp);
+						if (up && Blueamp <= 31)
+						{
+							_delay_ms(200);
+							Blueamp++;
+							RGBWriteBlueCurrent(Blueamp);
+						}
+						else if (down && Blueamp > 0)
+						{
+							_delay_ms(200);
+							Blueamp--;
+							RGBWriteBlueCurrent(Blueamp);
+						}
+						
+						sprintf(line1,"%2imA",(Blueamp));
+						SLCDSetCursorPosition(1,0); // writing a string variable to the display
+						SLCDWriteString(line1);
+						
+						if (left)
+						{
+							led();
+						}
 					}
 					
-					sprintf(line1,"%2imA",(Blueamp));
-					SLCDSetCursorPosition(1,0); // writing a string variable to the display
-					SLCDWriteString(line1);
-					
-				}
+				
+				
 			}
-			
+		
 		}
-		led();
 		SLCDSetCursorPosition(curledposition, 2);
 	}
 	
