@@ -449,17 +449,20 @@ void setup (void)
 	SLCDInit();         				// Initialize the LCD.
 	SLCDDisplayOn();    				// Switched On the LCD.
 	SLCDClearScreen();				// clear the LCD
-	DDRA = 0x00;					//
-	DDRC = 0xFF;					//
-	DDRE= 0x03;					//
-	PORTE = 0x01; 					// kinda just is
+	DDRA = 0x00;					// setting PORTA as input
+	DDRC = 0xFF;					// setting PORTC as output
+	DDRE= 0x03;					// setting the buttons
+	PORTE = 0x01; 					
 	
-	TCCR1A = 0b10100010; 				//channel A (motor), channel B (lamp)
-	TCCR1B = 0b00011010;   				//prescaler 8
+	//16 bit timer for motor and lamp
+	TCCR1A = 0b10100010; 				// setting channel A (motor) and channel B (lamp) to clear on compare match, set on top (ICR) and fast PWM
+	TCCR1B = 0b00011010;   				// fast PWM, prescaler 8
+	
 	DDRB = 0b01110000; 				// bit 6,5,4 turned on to turn on the motor (5),lamp (6) and speaker (4)
-	ICR1 = 49;
+	ICR1 = 49;					// settin the top value
 	
-	TCCR2A = 0b01000010; 				//speaker- CTC mode
+	// 8 bit timer for speaker
+	TCCR2A = 0b01000010; 				//running on CTC mode and toggle on compare match
 	TCCR2B = 0b00000010; 				// 8 prescaler
 	
 	PORTB = 0b01010000; 				// speaker
