@@ -467,5 +467,5 @@ void setup (void)
 	
 	PORTB = 0b01010000; 				// speaker
 	
-	DDRD = 0b00000010; 				// LED 
+	DDRD = 0b00000010; 				// set up the LEDs
 }
