@@ -150,102 +150,104 @@ char motor(void)
 			}
 			
 		}
-		OCR1A = speed/2; // A is for the motor
-		sprintf(line1,"%2i%%", speed);
-		SLCDSetCursorPosition(1,1);
+		OCR1A = speed/2; 				// updating the motor speed by defining OCR1A
+		sprintf(line1,"%2i%%", speed);			// printing the speed on line 1
+		SLCDSetCursorPosition(1,1);			// setting the cursor position
 		SLCDWriteString(line1);
 	}
-	SLCDClearScreen();
+	SLCDClearScreen();					// clears the screen when the left button is pressed before top menu printing
 	
 }
 
-char lamp(void)   /// always on
+// lamp function
+char lamp(void)   
 {
-	int intensity = 0;
-
-	SLCDClearScreen();
-	SLCDTurnOffBlinkingCursor();
-	while (!left)
+	int intensity = 0;					// ensuring the lamp is off initially
+	SLCDClearScreen();					// ensuring the screen is cleared 
+	SLCDTurnOffBlinkingCursor();				// ensures the blinker is off
+	while (!left)						// until left button is pressed do the following
 	{
 		char line0[20], line1[20];
-		sprintf(line0,"Lamp Brightness");
+		sprintf(line0,"Lamp Brightness");		// print the title 
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
-		if (up)
+		if (up)						// increase the lamp brightness by 1% when up is pressed each time
 		{
 			intensity++;
 			_delay_ms(100);
-			if (intensity > 100)
+			if (intensity > 100)			// ensures that the maximum intensity reached is 100
 			{
 				intensity = 100;
 			}
 		}
 		
-		else if (down)
+		else if (down)					// decrease the lamp brightness by 1% when down is pressed each time
 		{
 			intensity--;
 			_delay_ms(100);
-			if (intensity <0)
+			if (intensity <0)			// ensures that the minimum intensity is 0
 			{
 				intensity = 0;
 			}
 			
 		}
-		OCR1B = intensity/2;  // B is for lamp
-		sprintf(line1,"%2i%%", intensity);
+		OCR1B = intensity/2;  				// updating the lamp intensity by defining OCR1B
+		sprintf(line1,"%2i%%", intensity);		// printing the lamp intensity
 		SLCDSetCursorPosition(1,1);
 		SLCDWriteString(line1);
 	}
 	SLCDClearScreen();
 }
 
+// speaker function
 char speaker (void)
 {
-	int frequency = 0;
+	int frequency = 0;					// ensures the speaker is off initially 
 	SLCDClearScreen();
 	SLCDTurnOffBlinkingCursor();
-	while (!left)
+	while (!left)						// do the following until the left button is pressed 
 	{
 		char line0[20], line1[20];
 		sprintf(line0,"Speaker Frequency");
 		SLCDSetCursorPosition(0,0);
 		SLCDWriteString(line0);
 		
-		if (up)
+		if (up)						// increase the frequency if up is pressed
 		{
 			frequency++;
 			_delay_ms(100);
 			if (frequency >25)
 			{
-				frequency = 25;
+				frequency = 25;			// ensures frequency does not exceed 25
 			}
 		}
 		
-		else if (down)
+		else if (down)					// decrease the frequency if down is pressed
 		{
 			frequency--;
 			_delay_ms(100);
 			if (frequency < 0)
 			{
-				frequency = 0;
+				frequency = 0;			// ensures frequency does not exceed 25
 			}
 			
 		}
-		OCR2A = 500/frequency; // 2A is for the speaker
-		sprintf(line1,"%2ikHz", frequency);
+		OCR2A = 500/frequency; 				// updating the speaker by defining OCR2A
+		sprintf(line1,"%2ikHz", frequency);		// print the frequency
 		SLCDSetCursorPosition(1,1);
 		SLCDWriteString(line1);
 	}
 	SLCDClearScreen();
 }
 
+// led menu function
 char ledmenu (void)
 {
 	SLCDClearScreen();
 	SLCDTurnOffBlinkingCursor();
 	char line0[20], line1[20], line2[20], line3[20];
 	
-	while (!left)
+	while (!left)						// while left is not pressed display the RGB menu 
 	{
 		curledposition = 1;
 		sprintf(line0,"RGB LED Control");
@@ -268,70 +270,72 @@ char ledmenu (void)
 		
 	}
 	
-	SLCDClearScreen();
+	SLCDClearScreen();					// if left pressed, before the top menu is displayed, clear the screen
 }
 
+// led cursor function
 char ledcursor (void)
 {
 	char line0[20],line1[20],line2[20];
-	curledposition = 1;
+	curledposition = 1;					// ensures the intial position is 1 not 0
 	clp = 1;
 	SLCDSetCursorPosition(curledposition, 2);
-	SLCDTurnOnBlinkingCursor();
+	SLCDTurnOnBlinkingCursor();				// turn on the blinking cursor in the position defined by curledposition
 	
-	while (!left)
+	while (!left)						// while the left button is not pressed update the curledposition
 	{
 		if(up)
 		{
-			if (curledposition == 1)
+			if (curledposition == 1)		// ensures the cursor rolls to bottom from the top
 			{
 				curledposition = 3;
 				_delay_ms(150);
 			}
 			else
 			{
-				curledposition--;
+				curledposition--;		// decreasing the cursor position when up is pressed
 				_delay_ms(150);
-				clp = curledposition;
+				clp = curledposition;		// update the clp value with the position of the cursor
 			}
 			
 		}
 		if(down)
 		{
 			
-			if (curledposition > 3)
+			if (curledposition > 3)			// ensures the cursor rolls to top from the bottom
 			{
 				curledposition = 1;
 				_delay_ms(150);
 			}
 			else
 			{
-				curledposition++;
+				curledposition++;		// increasing the cursor position when down is pressed
 				_delay_ms(150);
 				clp = curledposition;
 			}
 			
 		}
 		
-		clp = curledposition;
-		changeAamps(clp);
+		clp = curledposition;				// update the clp position 
+		changeAamps(clp);				// change the current of the chosen led, which is dependent on the positon of the cursor, clp
 		
 		SLCDSetCursorPosition(curledposition, 2);
 	}
 	
 }
 
+// function to change the current of the leds
 void changeAamps (clp)
 {
 	char line0[20],line1[20],line2[20];
-	RGBEnable(RGB_RED|RGB_BLUE|RGB_GREEN);
-	RGBWriteRedCurrent(Redamp);
-	RGBWriteGreenCurrent(Greenamp);
-	RGBWriteBlueCurrent(Blueamp);
+	RGBEnable(RGB_RED|RGB_BLUE|RGB_GREEN); 			// enabling the LEDs
+	RGBWriteRedCurrent(Redamp);				// changing the current for red led
+	RGBWriteGreenCurrent(Greenamp);				// changing the current for green led
+	RGBWriteBlueCurrent(Blueamp);				// changing the current for blue led
 	
-	if(select||right)
+	if(select||right)					// is a option is selected
 	{
-		if(clp == 1)
+		if(clp == 1)					// check is the cursor was on 1 when selected
 		{
 			
 			SLCDClearScreen();
@@ -341,13 +345,13 @@ void changeAamps (clp)
 			SLCDWriteString(line0);
 			
 			
-			while (1)
+			while (1)				// change the red current 
 			{
-				if (up && Redamp <= 31)
+				if (up && Redamp <= 31)		// ensure the current does not exceed 31
 				{
 					_delay_ms(200);
-					Redamp++;
-					RGBWriteRedCurrent(Redamp);
+					Redamp++;		// increase the current is up was pressed
+					RGBWriteRedCurrent(Redamp);	// update the red current for changing the brighness of red
 				}
 				else if (down && Redamp > 0)
 				{
@@ -357,17 +361,17 @@ void changeAamps (clp)
 				}
 				
 				sprintf(line1,"%2imA",(Redamp));
-				SLCDSetCursorPosition(1,0); // writing a string variable to the display
+				SLCDSetCursorPosition(1,0); 	// display the current 
 				SLCDWriteString(line1);
 				
-				if (left)
+				if (left)			// if left button is pressed go back to the led menu
 				{
 					ledmenu();
 				}
 				
 			}
 		}
-		else if(clp == 2)
+		else if(clp == 2)				// check if the position was 2 and hence change the current of green
 		{
 			SLCDClearScreen();
 			SLCDTurnOffBlinkingCursor();
@@ -391,7 +395,7 @@ void changeAamps (clp)
 				}
 				
 				sprintf(line1,"%2imA",(Greenamp));
-				SLCDSetCursorPosition(1,0); // writing a string variable to the display
+				SLCDSetCursorPosition(1,0); 
 				SLCDWriteString(line1);
 				
 				if (left)
@@ -400,7 +404,7 @@ void changeAamps (clp)
 				}
 			}
 		}
-		else
+		else							// else change the current of blue led
 		{
 			SLCDClearScreen();
 			SLCDTurnOffBlinkingCursor();
@@ -438,25 +442,27 @@ void changeAamps (clp)
 	
 }
 
+
+// setup function
 void setup (void)
 {
-	SLCDInit();         // Initialize the LCD.
-	SLCDDisplayOn();    // Switched On the LCD.
-	SLCDClearScreen();
-	DDRA = 0x00;
-	DDRC = 0xFF;
-	DDRE= 0x03;
-	PORTE = 0x01; // kinda just is
+	SLCDInit();         				// Initialize the LCD.
+	SLCDDisplayOn();    				// Switched On the LCD.
+	SLCDClearScreen();				// clear the LCD
+	DDRA = 0x00;					//
+	DDRC = 0xFF;					//
+	DDRE= 0x03;					//
+	PORTE = 0x01; 					// kinda just is
 	
-	TCCR1A = 0b10100010; //channel A (motor), channel B (lamp)
-	TCCR1B = 0b00011010;   //prescaler 8
-	DDRB = 0b01110000; // bit 6,5,4 turned on to turn on the motor (5),lamp (6) and speaker (4)
+	TCCR1A = 0b10100010; 				//channel A (motor), channel B (lamp)
+	TCCR1B = 0b00011010;   				//prescaler 8
+	DDRB = 0b01110000; 				// bit 6,5,4 turned on to turn on the motor (5),lamp (6) and speaker (4)
 	ICR1 = 49;
 	
-	TCCR2A = 0b01000010; //speaker- CTC mode
-	TCCR2B = 0b00000010; // 8 prescaler
+	TCCR2A = 0b01000010; 				//speaker- CTC mode
+	TCCR2B = 0b00000010; 				// 8 prescaler
 	
-	PORTB = 0b01010000; // speaker
+	PORTB = 0b01010000; 				// speaker
 	
-	DDRD = 0b00000010; // LED -------------------------------
+	DDRD = 0b00000010; 				// LED 
 }
